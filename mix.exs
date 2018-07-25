@@ -4,12 +4,12 @@ defmodule OnePlusNDetector.MixProject do
   def project do
     [
       app: :one_plus_n_detector,
-      version: "0.1.0",
-      elixir: "~> 1.6",
-      start_permanent: Mix.env() == :prod,
       deps: deps(),
       description: description(),
+      elixir: "~> 1.4",
       package: package(),
+      start_permanent: Mix.env() == :prod,
+      version: "0.1.0",
     ]
   end
 
@@ -37,7 +37,7 @@ defmodule OnePlusNDetector.MixProject do
 
   defp description do
     """
-    Detect 1+n queries in your Ecto application.
+    Detect 1+n SQL queries in your Ecto application.
     """
   end
 end
