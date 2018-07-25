@@ -80,13 +80,17 @@ Documentation can be found at [https://hexdocs.pm/one_plus_n_detector](https://h
 
 ## Installation
 
+**This library should be used only on development**
+
 ```elixir
 def deps do
   [
-    {:one_plus_n_detector, "~> 0.1.0"}
+    {:one_plus_n_detector, "~> 0.1.0", only: :dev}
   ]
 end
 ```
+
+Remember to **not add** `:one_plus_n_detector` to your applications list!
 
 ## License
 
