@@ -32,7 +32,7 @@ defmodule OnePlusNDetector do
         :nothing
       {:no_match, _previous_query, count} ->
         if count > 2 do
-          IO.puts "---------> 1+n detected, total count: #{count}"
+          IO.puts "---------> 1+n SQL query detected, total count: #{count}"
         end
     end
 
