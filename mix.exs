@@ -22,13 +22,14 @@ defmodule OnePlusNDetector.MixProject do
 
   defp deps do
     [
-      {:ecto, "~> 2.0"}
+      {:ecto, "~> 2.0"},
+      {:ex_doc, ">= 0.0.0", only: :dev},
     ]
   end
 
   defp package do
     [
-      files: ["lib", "src", "mix.exs", "README.md", "LICENSE"],
+      files: ["lib", "mix.exs", "README.md", "LICENSE"],
       licenses: ["MIT"],
       links: %{"GitHub" => "https://github.com/san650/one_plus_n_detector"},
       maintainers: ["Santiago Ferreira"],
