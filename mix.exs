@@ -22,7 +22,7 @@ defmodule OnePlusNDetector.MixProject do
 
   defp deps do
     [
-      {:ecto, env: :dev, override: true}
+      {:ecto, "~> 2.0"}
     ]
   end
 
