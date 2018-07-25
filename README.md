@@ -48,30 +48,13 @@ This library helps you detect these cases by triggering a warning in your query 
 
 ## Usage
 
-Add an extra logger to Ecto repo.
+Add an extra logger to Ecto repo in development.
 
 ```elixir
 config :my_app, MyApp.Repo, loggers: [
   {OnePlusNDetector, :analyze, []},
   {Ecto.LogEntry, :log, []}
 ]
-```
-
-And then configure this library's GenServer in your application
-
-```elixir
-def start(_type, _args) do
-  import Supervisor.Spec, warn: false
-
-  children = [
-    supervisor(MyApp.Endpoint, []),
-    supervisor(MyApp.Repo, []),
-    worker(OnePlusNDetector.Detector, []),
-  ]
-
-  opts = [strategy: :one_for_one, name: MyApp.Supervisor]
-  Supervisor.start_link(children, opts)
-end
 ```
 
 ## Documentation
