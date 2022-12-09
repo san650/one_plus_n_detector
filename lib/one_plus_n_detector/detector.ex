@@ -7,34 +7,30 @@ defmodule OnePlusNDetector.Detector do
 
   # Increase counter or swaps query
   def check("SELECT" <> _rest = query) do
-    GenServer.call(__MODULE__, {:check, query})
+    do_check(query, get(query))
   end
 
   def check(_query) do
-    GenServer.call(__MODULE__, :reset)
+    nil
   end
 
-  def start_link() do
-    GenServer.start_link(__MODULE__, %{query: nil, counter: 0}, name: __MODULE__)
+  defp get(query) do
+    Process.get("one_plus_n_detector: #{query}")
   end
 
-  @impl true
-  def init(state) do
-    {:ok, state}
+  defp put(query, counter) do
+    Process.put("one_plus_n_detector: #{query}", counter)
   end
 
-  @impl true
-  def handle_call({:check, query}, _from, %{query: query, counter: counter} = state) do
-    {:reply, {:match, query, counter + 1}, Map.put(state, :counter, counter + 1)}
+  def do_check(query, nil) do
+    put(query, 1)
+    :first
   end
 
-  @impl true
-  def handle_call({:check, query}, _from, %{query: previous_query, counter: previous_count}) do
-    {:reply, {:no_match, previous_query, previous_count}, %{query: query, counter: 1}}
+  def do_check(query, counter) do
+    counter = counter + 1
+    put(query, counter)
+    {:match, counter}
   end
 
-  @impl true
-  def handle_call(:reset, _from, %{query: previous_query, counter: previous_count}) do
-    {:reply, {:no_match, previous_query, previous_count}, %{query: nil, counter: 0}}
-  end
 end
