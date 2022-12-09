@@ -3,8 +3,6 @@ defmodule OnePlusNDetector.Detector do
   Checks a query against the previous one and increments counter of collisions or swaps previous query with the last one.
   """
 
-  use GenServer
-
   # Increase counter or swaps query
   def check("SELECT" <> _rest = query) do
     do_check(query, get(query))

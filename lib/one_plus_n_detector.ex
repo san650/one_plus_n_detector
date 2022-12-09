@@ -1,6 +1,4 @@
 defmodule OnePlusNDetector do
-  use Application
-
   @moduledoc """
   Ecto Repo's logger adapter.
 
