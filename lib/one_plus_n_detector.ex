@@ -1,6 +1,4 @@
 defmodule OnePlusNDetector do
-  use Application
-
   @moduledoc """
   Ecto Repo's logger adapter.
 
@@ -10,32 +8,55 @@ defmodule OnePlusNDetector do
       ]
   """
 
+  require Logger
   alias OnePlusNDetector.Detector
 
-  @impl true
-  def start(_type, _args) do
-    import Supervisor.Spec, warn: false
+  @exclude_sources ["oban_jobs", "oban_peers"]
+  @exclude_queries ["commit", "begin"]
+  @exclude_match ["oban_jobs", "oban_peers", "oban_insert", "pg_notify", "pg_try_advisory_xact_lock"]
 
-    children = [
-      worker(OnePlusNDetector.Detector, []),
-    ]
+  def setup(repo_module) do
+    config = repo_module.config()
+    prefix = config[:telemetry_prefix]
+    # ^ Telemetry event id for Ecto queries
+    query_event = prefix ++ [:query]
 
-    Supervisor.start_link(children, strategy: :one_for_one)
+    Logger.debug "Setting up n+1 logging..."
+
+    :telemetry.attach(
+      "one_plus_n_detector",
+      query_event,
+      &OnePlusNDetector.handle_event/4,
+      []
+    )
   end
 
-  def analyze(%Ecto.LogEntry{query: query} = entry) do
-    # We need to make sure our app is started or start it ourselves
-    {:ok, _} = Application.ensure_all_started(:one_plus_n_detector)
+  def handle_event(
+        _,
+        _measurements,
+        %{query: query, source: source} = _metadata,
+        _config
+      )
+      when (is_nil(source) or source not in @exclude_sources) and
+             query not in @exclude_queries do
+   if not String.contains?(query, @exclude_match), do: analyze(query)
+  end
 
+  def handle_event(
+        _,
+        _measurements,
+        _metadata,
+        _config
+      ) do
+   # skip
+  end
+
+  def analyze(query) do
     case Detector.check(query) do
-      {:match, _query, _count} ->
-        :nothing
-      {:no_match, _previous_query, count} ->
-        if count > 2 do
-          IO.puts "---------> 1+n SQL query detected, total count: #{count}"
-        end
+      {:match, count} ->
+          Logger.warning "---------> Possible n+1 SQL query detected! number of occurrences: #{count}, query: #{query}"
+      _ ->
+        # no match
     end
-
-    entry
   end
 end

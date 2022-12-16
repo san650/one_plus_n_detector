@@ -15,14 +15,13 @@ defmodule OnePlusNDetector.MixProject do
 
   def application do
     [
-      extra_applications: [:logger],
-      mod: {OnePlusNDetector, []}
+      extra_applications: [:logger]
     ]
   end
 
   defp deps do
     [
-      {:ecto, "~> 2.0"},
+      {:ecto, "~> 3.0"},
       {:ex_doc, ">= 0.0.0", only: :dev},
     ]
   end
